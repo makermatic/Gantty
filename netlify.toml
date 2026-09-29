@@ -1,0 +1,19 @@
+# Gantty is plain static files - there is nothing to build.
+[build]
+  publish = "."
+
+# The CSS and JS filenames are not fingerprinted (app.css stays app.css
+# across deploys), so tell browsers to revalidate rather than serve a
+# stale copy after a deploy. This is the hosted version of the Ctrl+F5
+# problem you hit locally.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Source and notes do not need to be served, but they are harmless if
+# they are. Uncomment to keep the deploy to just the app.
+# [[redirects]]
+#   from = "/docs/*"
+#   to = "/index.html"
+#   status = 404

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gantty</title>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ================= TOOLBAR ================= -->
+  <header class="toolbar">
+    <div class="tb-group tb-brand">
+      <span class="brand">Gantty</span>
+      <input id="projectName" class="project-name" spellcheck="false" value="Untitled Schedule">
+    </div>
+
+    <div class="tb-sep"></div>
+
+    <div class="tb-group">
+      <button class="btn" id="btnAddGroup" title="Add a new category (Ctrl+G)">+ Category</button>
+      <button class="btn" id="btnAddTask" title="Add a task to the selected category (Ctrl+Enter)">+ Task</button>
+    </div>
+
+    <div class="tb-sep"></div>
+
+    <div class="tb-group">
+      <button class="btn" id="btnToday" title="Scroll so today is at the left edge">Today</button>
+      <button class="btn" id="btnStartToday" title="Shift the whole schedule so the earliest task begins today">Start Today</button>
+      <button class="btn" id="btnFit" title="Zoom + scroll to fit the whole schedule">Fit</button>
+    </div>
+
+    <div class="tb-sep"></div>
+
+    <div class="tb-group zoom">
+      <span class="lbl">Zoom</span>
+      <button class="btn btn-icon" id="btnZoomOut" title="Zoom out (Ctrl + scroll down)">&minus;</button>
+      <input type="range" id="zoom" min="3" max="80" step="1" value="26">
+      <button class="btn btn-icon" id="btnZoomIn" title="Zoom in (Ctrl + scroll up)">+</button>
+      <span class="zoom-val" id="zoomVal">26px</span>
+    </div>
+
+    <div class="tb-spacer"></div>
+
+    <div class="tb-group">
+      <button class="btn btn-icon" id="btnUndo" title="Undo (Ctrl+Z)">&#8630;</button>
+      <button class="btn btn-icon" id="btnRedo" title="Redo (Ctrl+Shift+Z)">&#8631;</button>
+    </div>
+
+    <div class="tb-sep"></div>
+
+    <div class="tb-group">
+      <div class="menu-wrap">
+        <button class="btn" id="btnExport">Export &#9662;</button>
+        <div class="menu" id="menuExport" hidden>
+          <button data-act="png">Image &mdash; PNG</button>
+          <button data-act="svg">Vector &mdash; SVG</button>
+          <button data-act="pdf">PDF / Print&hellip;</button>
+          <div class="menu-sep"></div>
+          <button data-act="json">Project file &mdash; JSON</button>
+          <button data-act="csv">Spreadsheet &mdash; CSV</button>
+        </div>
+      </div>
+      <button class="btn" id="btnImport" title="Open a .json project file">Open</button>
+      <input type="file" id="fileInput" accept="application/json,.json" hidden>
+    </div>
+
+    <div class="tb-sep"></div>
+
+    <div class="tb-group">
+      <div class="menu-wrap">
+        <button class="btn" id="btnSettings" title="Week numbers, weekends, today marker, bar labels">&#9881; View</button>
+        <div class="menu menu-right" id="menuSettings" hidden>
+          <label class="chk"><input type="checkbox" id="optWeekends" checked> Shade weekends</label>
+          <label class="chk"><input type="checkbox" id="optWeekNums" checked> Week numbers</label>
+          <label class="chk"><input type="checkbox" id="optToday" checked> Today marker</label>
+          <label class="chk"><input type="checkbox" id="optLabels" checked> Labels on bars</label>
+          <div class="menu-sep"></div>
+          <label class="chk"><input type="checkbox" id="optFree"> Free positioning (no day snap)</label>
+          <div class="menu-sep"></div>
+          <button data-act="clear" class="danger">Clear schedule&hellip;</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= CHART ================= -->
+  <div class="chart-scroll" id="scroll">
+    <div class="canvas" id="canvas">
+
+      <div class="header" id="header">
+        <div class="head-label" id="headLabel">
+          <button class="btn btn-icon ghost" id="btnCollapseAll" title="Collapse / expand all categories">&#8801;</button>
+          <span class="head-title">Categories</span>
+          <button class="btn btn-icon ghost head-add" id="btnHeadAddGroup" title="Add a category (Ctrl+G)">+</button>
+        </div>
+        <div class="head-track" id="headTrack">
+          <div class="head-months" id="headMonths"></div>
+          <div class="head-weeks"  id="headWeeks"></div>
+          <div class="head-days"   id="headDays"></div>
+        </div>
+      </div>
+
+      <div class="rows" id="rows"></div>
+
+      <div class="empty" id="empty" hidden>
+        <p>No categories yet.</p>
+        <button class="btn btn-primary" id="btnFirstGroup">Create your first category</button>
+        <p class="hint">Then drag anywhere in a row to draw a bar.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="statusbar" id="status">
+    <span id="statusLeft"></span>
+    <span class="tb-spacer"></span>
+    <span class="muted" id="statusRight">Drag a bar to move &middot; drag its edges to resize &middot; drag empty space to create</span>
+  </footer>
+
+</div>
+
+<!-- floating UI -->
+<div class="tip" id="tip" hidden></div>
+<div class="ctx" id="ctx" hidden></div>
+<div class="modal-back" id="modalBack" hidden><div class="modal" id="modal"></div></div>
+
+<script src="js/util.js"></script>
+<script src="js/state.js"></script>
+<script src="js/timeline.js"></script>
+<script src="js/render.js"></script>
+<script src="js/interact.js"></script>
+<script src="js/exporters.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
