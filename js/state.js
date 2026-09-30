@@ -27,7 +27,8 @@
 G.state = (function () {
   var U = G.util;
 
-  var STORAGE_KEY = 'gantty.doc.v1';
+  var STORAGE_KEY = 'ganty.doc.v1';
+  var LEGACY_KEY = 'gantty.doc.v1';   // the app was called Gantty until 2026-09-30
   var HISTORY_MAX = 80;
 
   var doc = null;
@@ -525,7 +526,7 @@ G.state = (function () {
     } catch (err) {
       // private mode, quota, file:// restrictions - autosave is a
       // convenience, never a requirement. Export still works.
-      if (window.console) console.warn('Gantty: autosave unavailable -', err.message);
+      if (window.console) console.warn('Ganty: autosave unavailable -', err.message);
     }
   }, 400);
 
@@ -537,9 +538,14 @@ G.state = (function () {
 
   function load() {
     var raw = null;
-    try { raw = localStorage.getItem(STORAGE_KEY); } catch (err) { /* ignore */ }
+    try {
+      raw = localStorage.getItem(STORAGE_KEY);
+      // fall back to the pre-rename key, then write forward. The old
+      // entry is left alone as a backup rather than deleted.
+      if (raw == null) raw = localStorage.getItem(LEGACY_KEY);
+    } catch (err) { /* ignore */ }
     if (raw) {
-      try { doc = normalize(JSON.parse(raw)); return 'restored'; }
+      try { doc = normalize(JSON.parse(raw)); saveNow(); return 'restored'; }
       catch (err) { /* fall through to a fresh document */ }
     }
     doc = sampleDoc();

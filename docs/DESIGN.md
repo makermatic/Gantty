@@ -1,4 +1,4 @@
-# Gantty — design notes
+# Ganty — design notes
 
 Why the thing is shaped the way it is. Read `README.md` first for what it does.
 

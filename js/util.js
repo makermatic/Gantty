@@ -162,12 +162,15 @@ G.util = (function () {
      Kept per browser rather than in the document: they follow the
      person, not the schedule. */
 
-  var RECENT_KEY = 'gantty.recentColors';
+  var RECENT_KEY = 'ganty.recentColors';
+  var LEGACY_RECENT_KEY = 'gantty.recentColors';   // pre-rename
   var RECENT_MAX = 8;
 
   function recentColors() {
     try {
-      var v = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+      var stored = localStorage.getItem(RECENT_KEY);
+      if (stored == null) stored = localStorage.getItem(LEGACY_RECENT_KEY);
+      var v = JSON.parse(stored || '[]');
       return Array.isArray(v) ? v.filter(normalizeHex).slice(0, RECENT_MAX) : [];
     } catch (err) { return []; }
   }

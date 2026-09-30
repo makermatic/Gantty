@@ -1,4 +1,4 @@
-# Gantty
+# Ganty
 
 A loose, Kitsu-style Gantt scheduler that runs in a browser with no install,
 no build step and no server.

@@ -1,4 +1,4 @@
-# Gantty is plain static files - there is nothing to build.
+# Ganty is plain static files - there is nothing to build.
 [build]
   publish = "."
 
