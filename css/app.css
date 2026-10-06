@@ -87,7 +87,18 @@ button, input, select{ font:inherit; color:inherit; }
 .zoom{ gap:8px; }
 .zoom .lbl{ color:var(--muted); }
 .zoom input[type=range]{ width:120px; accent-color:var(--accent); }
-.zoom-val{ color:var(--faint); width:42px; font-variant-numeric:tabular-nums; }
+.zoom-val{ display:inline-flex; align-items:center; gap:1px; color:var(--faint); }
+.zoom-val input{
+  width:36px; padding:3px 3px; text-align:right;
+  background:transparent; border:1px solid transparent; border-radius:5px;
+  color:var(--faint); font-variant-numeric:tabular-nums;
+  -moz-appearance:textfield;   /* spinners are noise at this size */
+}
+.zoom-val input::-webkit-outer-spin-button,
+.zoom-val input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+.zoom-val input:hover{ border-color:rgba(255,255,255,.12); }
+.zoom-val input:focus{ outline:none; border-color:var(--accent); background:rgba(0,0,0,.3); }
+.zoom-val .unit{ font-size:11px; }
 
 /* menus */
 .menu-wrap{ position:relative; }

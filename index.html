@@ -39,7 +39,11 @@
       <button class="btn btn-icon" id="btnZoomOut" title="Zoom out (Ctrl + scroll down)">&minus;</button>
       <input type="range" id="zoom" min="3" max="80" step="1" value="26">
       <button class="btn btn-icon" id="btnZoomIn" title="Zoom in (Ctrl + scroll up)">+</button>
-      <span class="zoom-val" id="zoomVal">26px</span>
+      <span class="zoom-val">
+        <input type="number" id="zoomVal" min="3" max="80" step="1" value="26"
+               title="Pixels per day - type a value and press Enter"
+               aria-label="Pixels per day"><span class="unit">px</span>
+      </span>
     </div>
 
     <div class="tb-spacer"></div>

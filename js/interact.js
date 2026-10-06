@@ -538,5 +538,25 @@ G.interact = (function () {
     zoomAt(sc.getBoundingClientRect().left + T.sidebarWidth() + sc.clientWidth / 2, dir);
   }
 
-  return { init: init, zoomAt: zoomAt, zoomBy: zoomBy };
+  /**
+   * Jump straight to a given pixels-per-day, keeping whatever is in the
+   * middle of the view in the middle of the view. Used by the slider and
+   * the typed zoom field, both of which otherwise fling you off to an
+   * unrelated stretch of calendar.
+   */
+  function zoomTo(px) {
+    var sc = T.scrollEl();
+    var next = U.clamp(Math.round(px), 3, 80);
+    if (!isFinite(next) || next === T.dayWidth()) return next;
+
+    var half = (sc.clientWidth - T.sidebarWidth()) / 2;
+    var anchorDay = T.day(sc.scrollLeft + half);
+
+    S.setView({ dayWidth: next });
+    R.render();                                   // widths first, then scroll
+    sc.scrollLeft = Math.max(0, (anchorDay - T.origin()) * next - half);
+    return next;
+  }
+
+  return { init: init, zoomAt: zoomAt, zoomBy: zoomBy, zoomTo: zoomTo };
 })();

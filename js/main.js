@@ -333,7 +333,8 @@
     U.$('#btnRedo').disabled = !S.canRedo();
     var v = S.view();
     U.$('#zoom').value = v.dayWidth;
-    U.$('#zoomVal').textContent = v.dayWidth + 'px';
+    var zoomField = U.$('#zoomVal');
+    if (document.activeElement !== zoomField) zoomField.value = v.dayWidth;
     var nameField = U.$('#projectName');
     if (document.activeElement !== nameField) nameField.value = S.getDoc().name;
     syncStatus();
@@ -398,9 +399,23 @@
 
     U.$('#btnZoomIn').onclick = function () { G.interact.zoomBy(1); };
     U.$('#btnZoomOut').onclick = function () { G.interact.zoomBy(-1); };
-    U.$('#zoom').oninput = function () {
-      S.setView({ dayWidth: +this.value });
-    };
+    U.$('#zoom').oninput = function () { G.interact.zoomTo(+this.value); };
+
+    // ---- typed zoom
+    var zoomField = U.$('#zoomVal');
+    function commitZoom() {
+      var v = parseInt(zoomField.value, 10);
+      if (!isFinite(v)) { zoomField.value = S.view().dayWidth; return; }
+      // zoomTo clamps; echo back what it actually settled on so an
+      // out-of-range entry corrects itself in front of you
+      zoomField.value = G.interact.zoomTo(v) || S.view().dayWidth;
+    }
+    zoomField.addEventListener('change', commitZoom);
+    zoomField.addEventListener('keydown', function (e) {
+      e.stopPropagation();
+      if (e.key === 'Enter') { e.preventDefault(); commitZoom(); zoomField.blur(); }
+      if (e.key === 'Escape') { zoomField.value = S.view().dayWidth; zoomField.blur(); }
+    });
 
     U.$('#btnUndo').onclick = function () { S.undo(); };
     U.$('#btnRedo').onclick = function () { S.redo(); };
