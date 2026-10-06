@@ -39,6 +39,8 @@ G.interact = (function () {
     sc.addEventListener('wheel', onWheel, { passive: false });
     sc.addEventListener('scroll', function () { R.updateHandleVisibility(); });
 
+    initSideResizer();
+
     window.addEventListener('pointermove', onPointerMove);
     window.addEventListener('pointerup', onPointerUp);
     window.addEventListener('pointercancel', onPointerUp);
@@ -251,6 +253,33 @@ G.interact = (function () {
     return { origin: origin, days: n + (o - origin) };
   }
 
+  /* ------------------------------------------------- gesture: side column */
+
+  function initSideResizer() {
+    var el = U.$('#sideResizer');
+    if (!el) return;
+
+    el.addEventListener('pointerdown', function (ev) {
+      if (ev.button !== 0) return;
+      drag = {
+        type: 'side', el: el,
+        origW: S.view().sideWidth,
+        startX: ev.clientX, clientX: ev.clientX, clientY: ev.clientY,
+        startScroll: T.scrollEl().scrollLeft, moved: false
+      };
+      el.classList.add('active');
+      document.body.classList.add('resizing');
+      ev.preventDefault();
+    });
+
+    // double-click: widen (or narrow) to exactly fit the longest name
+    el.addEventListener('dblclick', function (ev) {
+      ev.preventDefault();
+      var want = R.idealSidebarWidth();
+      if (want) S.setView({ sideWidth: U.clamp(Math.ceil(want), S.SIDE_MIN, S.SIDE_MAX) });
+    });
+  }
+
   /* ------------------------------------------------- gesture: reorder */
 
   function startReorder(ev, row) {
@@ -345,6 +374,12 @@ G.interact = (function () {
         : 'Timeline starts <b>' + U.longLabel(r.origin) + '</b>') +
         '<br>' + U.durationLabel(r.days) + ' shown');
 
+    } else if (drag.type === 'side') {
+      // raw pointer delta here - unlike the bar gestures this must not
+      // pick up auto-scroll, the column does not live on the timeline
+      var w = drag.origW + (drag.clientX - drag.startX);
+      S.setView({ sideWidth: Math.round(U.clamp(w, S.SIDE_MIN, S.SIDE_MAX)) });
+
     } else if (drag.type === 'reorder') {
       drag.row.classList.add('drag-src');
       updateReorder();
@@ -407,7 +442,7 @@ G.interact = (function () {
         if (row) S.select(row.dataset.kind, row.dataset.id);
       }
 
-    } else if (d.type === 'range') {
+    } else if (d.type === 'range' || d.type === 'side') {
       d.el.classList.remove('active');
       S.save();
 

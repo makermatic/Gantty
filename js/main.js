@@ -640,6 +640,7 @@
 
     window.addEventListener('resize', U.debounce(function () {
       R.positionRangeHandles();
+      R.positionSideResizer();
     }, 120));
 
     // last-chance save if the debounce has not fired yet

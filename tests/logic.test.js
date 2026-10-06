@@ -115,5 +115,13 @@ eq(S.findGroup(gc.id).color,     '#abcdef', 'category itself changed');
 S.resetTaskColors(gc.id);
 eq(S.findTask(custom.id).color, '#abcdef', 'reset overrides the customised task');
 
+// --- the category column width is clamped on the way in
+S.replace({name:'w', view:{sideWidth: 9999}, groups:[]});
+eq(S.view().sideWidth, S.SIDE_MAX, 'absurdly wide column clamped down');
+S.replace({name:'w', view:{sideWidth: 10}, groups:[]});
+eq(S.view().sideWidth, S.SIDE_MIN, 'absurdly narrow column clamped up');
+S.replace({name:'w', groups:[]});
+eq(S.view().sideWidth, 320, 'missing width falls back to the default');
+
 console.log(pass+' passed, '+fail+' failed');
 process.exit(fail?1:0);

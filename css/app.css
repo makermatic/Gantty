@@ -178,6 +178,7 @@ button, input, select{ font:inherit; color:inherit; }
   border-right:1px solid rgba(0,0,0,.45);
 }
 .row-label .pill{
+  position:relative;
   display:flex; align-items:center; gap:7px;
   flex:1 1 auto; min-width:0; height:100%;
   background:var(--panel-2); border-radius:22px;
@@ -219,8 +220,31 @@ button, input, select{ font:inherit; color:inherit; }
 .name:hover{ border-color:rgba(255,255,255,.12); }
 .name:focus{ outline:none; border-color:var(--accent); background:rgba(0,0,0,.3); }
 
-.row-actions{ flex:0 0 auto; display:flex; gap:2px; opacity:0; transition:opacity .12s; }
-.row-label:hover .row-actions{ opacity:1; }
+/* Floated over the end of the pill rather than sitting in the flex flow.
+   As a flex item these buttons reserved ~50px of every row even at
+   opacity:0, so names ran out of space long before the bubble did. */
+.row-actions{
+  position:absolute; right:3px; top:50%; transform:translateY(-50%);
+  display:flex; gap:2px; align-items:center;
+  opacity:0; pointer-events:none; transition:opacity .12s;
+}
+/* Visible on hover, and all the while you are typing - you may well
+   want to delete the thing you just realised is wrong. */
+.row-label:hover .row-actions,
+.pill .name:focus ~ .row-actions{ opacity:1; pointer-events:auto; }
+
+/* Reserve room for them so a long name stops cleanly short instead of
+   running underneath.
+   MARGIN, not padding: a focused contenteditable scrolls to follow the
+   caret, and overflow clips at the padding box - so padding alone let
+   the text render straight back over the buttons. Margin shrinks the
+   whole box, so the clip lands in the right place too.
+   Keyed on hover OR focus together, so the field does not resize under
+   you when the mouse happens to cross the row mid-rename. */
+.row.group .row-label:hover .name,
+.row.group .name:focus{ margin-right:54px; }
+.row.task  .row-label:hover .name,
+.row.task  .name:focus{ margin-right:30px; }
 .row-actions button{
   width:24px; height:24px; border:0; border-radius:5px; background:transparent;
   color:var(--muted); cursor:pointer; line-height:1; padding:0;
@@ -306,6 +330,20 @@ button, input, select{ font:inherit; color:inherit; }
 .range-handle.active .knob{ background:var(--range); }
 .range-handle:hover .stem,
 .range-handle.active .stem{ opacity:1; width:2px; }
+
+/* ---------------------------------------------- category column resizer
+   Fixed to the viewport rather than placed in the canvas: the sidebar is
+   sticky, so its right edge is always at the same screen x no matter how
+   far the chart is scrolled. JS keeps left/top/height in sync. */
+.side-resizer{
+  position:fixed; width:9px; z-index:35; cursor:col-resize;
+}
+.side-resizer::after{
+  content:""; position:absolute; top:0; bottom:0; left:4px; width:1px;
+  background:transparent; transition:background .12s;
+}
+.side-resizer:hover::after,
+.side-resizer.active::after{ background:var(--accent); width:2px; }
 
 /* overlays -------------------------------------------------- */
 .today-col{

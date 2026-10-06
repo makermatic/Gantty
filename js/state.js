@@ -45,6 +45,7 @@ G.state = (function () {
       origin: U.weekStart(t) - 7,   // start the week before this one
       days: 70,                     // ten weeks of runway
       dayWidth: 26,
+      sideWidth: 320,               // category column, drag its edge to change
       weekends: true,
       weekNums: true,
       todayMarker: true,
@@ -423,6 +424,9 @@ G.state = (function () {
   /** hard floor so the range can never collapse to nothing */
   var MIN_DAYS = 7;
 
+  /** how far the category column may be dragged */
+  var SIDE_MIN = 160, SIDE_MAX = 680;
+
   /**
    * Drag-the-end-of-the-timeline support (the Harmony-style grips).
    * Moving the LEFT grip changes both origin and length; moving the
@@ -491,6 +495,7 @@ G.state = (function () {
       for (var k in d.view) if (raw.view[k] !== undefined) d.view[k] = raw.view[k];
     }
     d.view.dayWidth = U.clamp(+d.view.dayWidth || 26, 3, 80);
+    d.view.sideWidth = U.clamp(+d.view.sideWidth || 320, SIDE_MIN, SIDE_MAX);
     d.view.days = Math.max(MIN_DAYS, Math.round(+d.view.days || 70));
     d.view.origin = Math.round(+d.view.origin);
     if (!isFinite(d.view.origin)) d.view.origin = defaultView().origin;
@@ -600,7 +605,7 @@ G.state = (function () {
 
     view: view, setView: setView, setRange: setRange,
     growRangeToFit: growRangeToFit, fitRangeToContent: fitRangeToContent,
-    MIN_DAYS: MIN_DAYS,
+    MIN_DAYS: MIN_DAYS, SIDE_MIN: SIDE_MIN, SIDE_MAX: SIDE_MAX,
 
     getSelection: getSelection, select: select
   };

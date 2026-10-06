@@ -162,6 +162,7 @@ G.render = (function () {
     });
 
     positionRangeHandles();
+    positionSideResizer();
   }
 
   function buildLabel(r, isGroup) {
@@ -193,6 +194,7 @@ G.render = (function () {
     name.contentEditable = 'true';
     name.spellcheck = false;
     name.dataset.role = 'name';
+    name.title = isGroup ? r.group.name : r.task.name;   // readable when truncated
     pill.appendChild(name);
 
     var acts = U.el('div', 'row-actions');
@@ -291,6 +293,34 @@ G.render = (function () {
     updateHandleVisibility();
   }
 
+  /** keep the fixed-position column resizer glued to the sidebar's edge */
+  function positionSideResizer() {
+    var el = U.$('#sideResizer');
+    var sc = T.scrollEl();
+    if (!el || !sc) return;
+    var r = sc.getBoundingClientRect();
+    el.style.left = (r.left + T.sidebarWidth() - 4) + 'px';
+    el.style.top = r.top + 'px';
+    el.style.height = r.height + 'px';
+  }
+
+  /**
+   * Widest name currently rendered, plus the chrome around it - what the
+   * column would need so nothing is truncated. Used by double-click.
+   */
+  function idealSidebarWidth() {
+    var want = 0;
+    U.$$('.row', elRows).forEach(function (row) {
+      var name = U.$('.name', row);
+      var label = U.$('.row-label', row);
+      if (!name || !label) return;
+      // everything in the row that is not the text itself
+      var chrome = label.offsetWidth - name.offsetWidth;
+      want = Math.max(want, name.scrollWidth + chrome + 8);
+    });
+    return want;
+  }
+
   /** hide the left grip once it has scrolled underneath the sticky sidebar */
   function updateHandleVisibility() {
     var sc = T.scrollEl();
@@ -319,6 +349,7 @@ G.render = (function () {
   function render() {
     var v = S.view();
     U.cssVar('--day-w', T.dayWidth() + 'px');
+    U.cssVar('--side-w', v.sideWidth + 'px');
     // turning week numbers off should give the space back, not leave a gap
     U.cssVar('--head-weeks', v.weekNums ? '20px' : '0px');
     renderHeader();
@@ -330,6 +361,7 @@ G.render = (function () {
     renderHeader: renderHeader, renderRows: renderRows,
     placeBar: placeBar, rangeText: rangeText, barTitle: barTitle,
     positionRangeHandles: positionRangeHandles,
+    positionSideResizer: positionSideResizer, idealSidebarWidth: idealSidebarWidth,
     updateHandleVisibility: updateHandleVisibility,
     gridStyle: gridStyle
   };
